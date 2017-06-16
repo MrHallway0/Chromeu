@@ -13,7 +13,7 @@ ifeq ($(CONFIG_TIANOCORE_UEFIPAYLOAD),y)
 bootloader=UefiPayloadPkg
 logo_pkg=MdeModulePkg
 build_flavor=-D BOOTLOADER=COREBOOT -D PCIE_BASE=$(CONFIG_MMCONF_BASE_ADDRESS) -DPS2_KEYBOARD_ENABLE
-TAG=upstream/master
+TAG=origin/uefipayloadpkg
 else
 bootloader=CorebootPayloadPkg
 logo_pkg=CorebootPayloadPkg
@@ -39,13 +39,17 @@ endif
 
 TIMEOUT=-D PLATFORM_BOOT_TIMEOUT=$(CONFIG_TIANOCORE_BOOT_TIMEOUT)
 
+ifeq ($(CONFIG_TIANOCORE_GOP_DRIVER), y)
+GOP=-DUSE_PLATFORM_GOP
+endif
+
 ifeq ($(CONFIG_TIANOCORE_TARGET_IA32), y)
 ARCH=-a IA32 -p $(bootloader)/$(bootloader)Ia32.dsc
 else
 ARCH=-a IA32 -a X64 -p $(bootloader)/$(bootloader)Ia32X64.dsc
 endif
 
-BUILD_STR=-q $(ARCH) -t COREBOOT -b $(BUILD_TYPE) $(TIMER) $(TIMEOUT) $(build_flavor)
+BUILD_STR=-q $(ARCH) -t COREBOOT -b $(BUILD_TYPE) $(TIMER) $(TIMEOUT) $(build_flavor) $(GOP)
 
 all: clean build
 
@@ -93,6 +97,11 @@ build: update checktools
 			*) cp $(top)/$(CONFIG_TIANOCORE_BOOTSPLASH_FILE) \
 				$(project_dir)/$(logo_pkg)/Logo/Logo.bmp;; \
 		esac \
+	fi; \
+	if [ -n "$(CONFIG_TIANOCORE_GOP_DRIVER)" ]; then \
+		echo "Using GOP driver $(CONFIG_TIANOCORE_GOP_FILE)"; \
+		cp $(top)/$(CONFIG_TIANOCORE_GOP_FILE) $(project_dir)/$(bootloader)/IntelGopDriver.efi; \
+		cp $(top)/$(CONFIG_TIANOCORE_VBT_FILE) $(project_dir)/$(bootloader)/vbt.bin; \
 	fi; \
 	cd $(project_dir); \
 		export EDK_TOOLS_PATH=$(project_dir)/BaseTools; \
