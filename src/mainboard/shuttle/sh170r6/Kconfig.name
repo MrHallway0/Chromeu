@@ -1,0 +1,2 @@
+config BOARD_SHUTTLE_SH170R6
+	bool "SH170R6"
