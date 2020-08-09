@@ -1,0 +1,2 @@
+config BOARD_EGLOBAL_V310_CML
+	bool "v310-cml"

@@ -1,0 +1,15 @@
+if VENDOR_EGLOBAL
+
+choice
+	prompt "Mainboard model"
+
+source "src/mainboard/eglobal/*/Kconfig.name"
+
+endchoice
+
+source "src/mainboard/eglobal/*/Kconfig"
+
+config MAINBOARD_VENDOR
+	default "Eglobal"
+
+endif
