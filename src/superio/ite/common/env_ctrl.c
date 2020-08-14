@@ -31,7 +31,7 @@ static void extemp_force_idle_status(const u16 base)
 		 * Re-configure Register 0x8E to terminate processes.
 		 */
 		pnp_write_hwm5_index(base, ITE_EC_EXTEMP_CONTROL,
-			ITE_EC_EXTEMP_CTRL_AUTO_4HZ | ITE_EC_EXTEMP_CTRL_AUTO_START);
+			ITE_EC_EXTEMP_CTRL_AUTO_32HZ | ITE_EC_EXTEMP_CTRL_AUTO_START);
 	}
 }
 
@@ -50,7 +50,7 @@ static void enable_peci(const u16 base)
 	pnp_write_hwm5_index(base, ITE_EC_EXTEMP_WRITE_LENGTH, PECI_GETTEMP_WRITE_LENGTH);
 	pnp_write_hwm5_index(base, ITE_EC_EXTEMP_READ_LENGTH, PECI_GETTEMP_READ_LENGTH);
 	pnp_write_hwm5_index(base, ITE_EC_EXTEMP_CONTROL,
-		ITE_EC_EXTEMP_CTRL_AUTO_4HZ | ITE_EC_EXTEMP_CTRL_AUTO_START);
+		ITE_EC_EXTEMP_CTRL_AUTO_32HZ | ITE_EC_EXTEMP_CTRL_AUTO_START);
 }
 
 /*
