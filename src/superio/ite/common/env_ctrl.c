@@ -111,7 +111,7 @@ static void enable_tmpin(const u16 base, const u8 tmpin,
 	pnp_write_hwm5_index(base, ITE_EC_ADC_TEMP_CHANNEL_ENABLE, reg);
 
 	/* Set temperature offsets */
-	if (conf->mode != THERMAL_RESISTOR && conf->offset != 0) {
+	if (conf->mode != THERMAL_RESISTOR) {
 		reg = pnp_read_hwm5_index(base, ITE_EC_BEEP_ENABLE);
 		reg |= ITE_EC_TEMP_ADJUST_WRITE_ENABLE;
 		pnp_write_hwm5_index(base, ITE_EC_BEEP_ENABLE, reg);
@@ -167,7 +167,7 @@ static void fan_smartconfig(const u16 base, const u8 fan,
 		}
 
 		if (conf->smoothing)
-				pwm_auto |= ITE_EC_FAN_CTL_AUTO_SMOOTHING_EN;
+			pwm_auto |= ITE_EC_FAN_CTL_AUTO_SMOOTHING_EN;
 
 		pnp_write_hwm5_index(base, ITE_EC_FAN_CTL_TEMP_LIMIT_OFF(fan), conf->tmp_off);
 		pnp_write_hwm5_index(base, ITE_EC_FAN_CTL_TEMP_LIMIT_START(fan),
@@ -182,9 +182,9 @@ static void fan_smartconfig(const u16 base, const u8 fan,
 			delta_temp);
 	}
 
-	pnp_write_hwm5_index(base, ITE_EC_FAN_CTL_PWM_CONTROL(fan), pwm_ctrl);	// 0x15 - 0x84
-	pnp_write_hwm5_index(base, ITE_EC_FAN_CTL_PWM_START(fan), pwm_start);	// 0x63 - 0x1f
-	pnp_write_hwm5_index(base, ITE_EC_FAN_CTL_PWM_AUTO(fan), pwm_auto);	// 0x64 - 0x88
+	pnp_write_hwm5_index(base, ITE_EC_FAN_CTL_PWM_CONTROL(fan), pwm_ctrl);
+	pnp_write_hwm5_index(base, ITE_EC_FAN_CTL_PWM_START(fan), pwm_start);
+	pnp_write_hwm5_index(base, ITE_EC_FAN_CTL_PWM_AUTO(fan), pwm_auto);
 }
 
 static void enable_fan(const u16 base, const u8 fan,
@@ -230,7 +230,6 @@ static void enable_fan(const u16 base, const u8 fan,
 			reg &= ~ITE_EC_FAN_SEC_CTL_TAC_EN(fan);
 		pnp_write_hwm5_index(base, ITE_EC_FAN_SEC_CTL, reg);
 	} else {
-		pnp_write_hwm5_index(base, ITE_EC_FAN_SEC_CTL, 0x0);
 		reg = pnp_read_hwm5_index(base, ITE_EC_FAN_MAIN_CTL);
 		if (conf->mode >= FAN_MODE_ON)
 			reg |= ITE_EC_FAN_MAIN_CTL_TAC_EN(fan);
@@ -250,7 +249,7 @@ static void enable_fan(const u16 base, const u8 fan,
 
 static void enable_beeps(const u16 base, const struct ite_ec_config *const conf)
 {
-	u8 reg = 0x77;
+	u8 reg = 0;
 	u8 freq = ITE_EC_BEEP_TONE_DIVISOR(10) | ITE_EC_BEEP_FREQ_DIVISOR(10);
 
 	if (conf->tmpin_beep) {
