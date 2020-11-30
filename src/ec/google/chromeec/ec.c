@@ -1556,7 +1556,8 @@ int google_chromeec_swsync(void)
 	need_update = SafeMemcmp(ec_hash, ecrw_hash, SHA256_DIGEST_SIZE);
 
 	/* If in RW and need to update, return/reboot to RO */
-	if (need_update && google_chromeec_get_current_image() == EC_IMAGE_RW) {
+	if (need_update && google_chromeec_get_current_image() == EC_IMAGE_RW
+			&& !CONFIG(BOARD_GOOGLE_BASEBOARD_PUFF)) {
 		printk(BIOS_DEBUG, "ChromeEC SW Sync: EC_RW needs update but in RW; rebooting to RO\n");
 		google_chromeec_reboot_ro();
 		return -1;
@@ -1576,6 +1577,11 @@ int google_chromeec_swsync(void)
 		if (google_chromeec_flash_update_rw(ecrw, ecrw_size)) {
 			printk(BIOS_ERR, "ChromeEC SW Sync: Failed to update EC_RW.\n");
 			return -1;
+		}
+
+		/* PUFF-based boards need a full reset here */
+		if (CONFIG(BOARD_GOOGLE_BASEBOARD_PUFF)) {
+			google_chromeec_reboot_ro();
 		}
 
 		/* Have EC recompute hash for new EC_RW block */
