@@ -72,6 +72,17 @@ chip soc/intel/cannonlake
 	register "ScsEmmcHs400Enabled" = "1"
 
 	device domain 0 on
+		device pci 02.0 on	# Integrated Graphics Device
+			register "gfx"			= "GMA_STATIC_DISPLAYS(0)"
+			register "panel_cfg" = "{
+				.up_delay_ms		=  200,
+				.down_delay_ms		=   50,
+				.cycle_delay_ms		=  500,
+				.backlight_pwm_hz	= 1000,
+				.backlight_on_delay_ms	=    1,
+				.backlight_off_delay_ms	=    1,
+			}"
+		end
 		device pci 14.0 on
 			chip drivers/usb/acpi
 				register "desc" = ""Root Hub""
